@@ -24,7 +24,8 @@ int main(int argc, const char * argv[]) {
         }
         NSString *plistFilePath = [NSString stringWithFormat:@"%s", argv[1]];
         NSString *htmlFilePath = [NSString stringWithFormat:@"%s", argv[2]];
-        NSString *svnLog = [NSString stringWithFormat:@"%s", argv[3]];
+        NSString *svnLogPath = [NSString stringWithFormat:@"%s", argv[3]];
+        NSString *titleString = [NSString stringWithFormat:@"%s", argv[4]];
         NSDictionary *plistDic = [NSDictionary dictionaryWithContentsOfFile:plistFilePath];
         if (!plistDic) {
             printf("plist文件未发现内容\n");
@@ -42,9 +43,12 @@ int main(int argc, const char * argv[]) {
         NSNumber *version = [plistDic objectForKey:@"Version"];
         
         NSMutableString *content = [NSMutableString string];
-        [content appendString:@"<html><head><title>app info</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><style type=\"text/css\">table{ background-color:#aaa; line-height:25px;}th{ background-color:#fff;}td{ background-color:#fff; text-align:left}</style></heade><body>"];
-        if (svnLog) {
-            [content appendString:svnLog];
+        [content appendFormat:@"<html><head><title>app info</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><style type=\"text/css\">table{ background-color:#aaa; line-height:25px;}th{ background-color:#fff;}td{ background-color:#fff; text-align:left}</style></heade><body><h1>%@</h1>", titleString];
+        if (svnLogPath) {
+            [content appendString:@"<xmp>"];
+            NSString *svnLogContent = [[NSString alloc] initWithContentsOfFile:svnLogPath encoding:NSUTF8StringEncoding error:nil];
+            [content appendString:svnLogContent];
+            [content appendString:@"</xmp>"];
         }
         [content appendString:@"<table width=\"500\" cellpadding=\"10\" cellspacing=\"1\">"];
         if (appIdName) {
